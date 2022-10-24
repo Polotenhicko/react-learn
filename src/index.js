@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM, { createRoot } from "react-dom/client";
 import { greeting } from "./greeting-jsx";
+import { element, App, Comment } from "./components";
 
 // допустим есть div в html файле
 // <div id="root"></div>
@@ -28,9 +29,30 @@ function tick() {
 	);
 	root.render(element);
 }
-
+const interval = setInterval(tick, 5e2);
 // реакт обновляет только то, что необходимо!!
-setInterval(tick, 1e3);
+setTimeout(() => {
+	clearInterval(interval);
+	root.render(element);
+}, 2e3);
+
+setTimeout(() => {
+	root.render(App());
+}, 3e3);
+
+setTimeout(() => {
+	root.render(
+		Comment({
+			user: {
+				name: "User",
+				avatarUrl: "URL",
+			},
+			text: "Some text",
+			date: Date.now(),
+		})
+	);
+}, 4e3);
+
 // несмотря на то, что мы создаём элемент, описывающий всё UI дерево,
 // каждую секунду React DOM изменяет только текстовый узел, содержимое которое изменилось
 
