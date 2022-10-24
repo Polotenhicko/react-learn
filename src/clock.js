@@ -68,10 +68,12 @@ Clock = class Clock extends React.Component {
 	// эти методы называются "методами жизненного цикла"
 	componentDidMount() {
 		// запускается после того, как компонент отрендерился в DOM, здесь мы и установим таймер
+		console.log("componentDidMount"); // вызвался только 1 раз, значит только когда вставлен
 		this.timerId = setInterval(() => this.tick(), 1e3);
 	}
 
 	componentWillUnmount() {
+		console.log("componentWillUnmount");
 		// сбрасываем таймер в методе жизненного цикла
 		clearInterval(this.timerId);
 	}
