@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM, { createRoot } from "react-dom/client";
 import { greeting } from "./greeting-jsx";
 import { element, App, Comment } from "./components";
+import { Clock } from "./clock";
 
 // допустим есть div в html файле
 // <div id="root"></div>
@@ -20,7 +21,7 @@ root.render(greeting);
 // после создания элемента нельзя изменить его потомков или атрибуты
 // пока что есть только 1 способ изменить его - это создать новый элемент и передать его в root.render()
 
-function tick() {
+let tick = function tick() {
 	const element = (
 		<div>
 			<h1>Hello</h1>
@@ -28,8 +29,8 @@ function tick() {
 		</div>
 	);
 	root.render(element);
-}
-const interval = setInterval(tick, 5e2);
+};
+let interval = setInterval(tick, 5e2);
 // реакт обновляет только то, что необходимо!!
 setTimeout(() => {
 	clearInterval(interval);
@@ -58,3 +59,28 @@ setTimeout(() => {
 
 // на практике обычно вызывают root.render() 1 раз
 // можно обновлять при помощи компонента состояния
+
+// пока что изучено обновление UI только при помощи root.render()
+// попробуем инкапсулировать и обеспечить многократное использование компонента Clock
+
+tick = function tick() {
+	root.render(<Clock />);
+};
+
+setTimeout(() => {
+	interval = setInterval(() => {
+		tick();
+	}, 1e3);
+}, 5e3);
+
+// проблема, компонент Clock не обновляет себя каждую секунду автоматически
+// в идеале хочется чтобы Clock сам себя обновлял
+
+// для этого добавим "состояние" (state) в компонент Clock
+// «Состояние» очень похоже на уже знакомые нам пропсы,
+// отличие в том, что состояние контролируется и доступно только конкретному компоненту.
+
+setInterval(() => {
+	clearInterval(interval);
+	root.render(<Clock />);
+}, 6e3);
