@@ -3,6 +3,7 @@ import ReactDOM, { createRoot } from "react-dom/client";
 import { greeting } from "./greeting-jsx";
 import { element, App, Comment } from "./components";
 import { Clock } from "./clock";
+import { Toggle } from "./events";
 
 // допустим есть div в html файле
 // <div id="root"></div>
@@ -80,7 +81,11 @@ setTimeout(() => {
 // «Состояние» очень похоже на уже знакомые нам пропсы,
 // отличие в том, что состояние контролируется и доступно только конкретному компоненту.
 
-setInterval(() => {
+setTimeout(() => {
 	clearInterval(interval);
 	root.render(<Clock />);
+}, 6e3);
+
+setTimeout(() => {
+	root.render(<Toggle />);
 }, 6e3);
