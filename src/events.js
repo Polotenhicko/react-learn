@@ -95,9 +95,16 @@ Toggle = class Toggle extends React.Component {
 		}));
 	}
 
-	showId(id) {
+	showId(id, b, e, a) {
 		console.log(`${this.id} ${id}`);
+		console.log(b); // тут будет e
+		console.log(e);
+		console.log(a);
 		console.log(arguments);
+	}
+
+	method(num) {
+		console.log(num);
 	}
 
 	render() {
@@ -108,11 +115,25 @@ Toggle = class Toggle extends React.Component {
 				<button onClick={(e) => this.showId(this.id + 3)}>Ваш айди</button>
 				{/* с bind аргумент e передаётся последним аргументом(я не уверен) */}
 				<button onClick={this.showId.bind(this, this.id + 3)}>Ваш айди 2</button>
+				<Comp num={this.method} />
 			</div>
 		);
 	}
 };
 
-// проверить куда передаётся e
+class Comp extends React.Component {
+	constructor(props) {
+		super(props);
+		this.props = props;
+	}
+
+	handleMethod() {
+		this.props.num(123);
+	}
+
+	render() {
+		return <div onClick={() => this.handleMethod()}>123</div>;
+	}
+}
 
 export { Toggle };

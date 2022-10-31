@@ -88,4 +88,4 @@ setTimeout(() => {
 
 setTimeout(() => {
 	root.render(<Toggle />);
-}, 6e3);
+}, 7e3);
