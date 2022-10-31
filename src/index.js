@@ -4,6 +4,7 @@ import { greeting } from "./greeting-jsx";
 import { element, App, Comment } from "./components";
 import { Clock } from "./clock";
 import { Toggle } from "./events";
+import { Greeting } from "./conditionalRender";
 
 // допустим есть div в html файле
 // <div id="root"></div>
@@ -89,3 +90,7 @@ setTimeout(() => {
 setTimeout(() => {
 	root.render(<Toggle />);
 }, 7e3);
+
+setTimeout(() => {
+	root.render(<Greeting isLoggedIn={false} />);
+}, 8e3);
