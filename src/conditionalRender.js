@@ -89,4 +89,41 @@ function Mailbox(props) {
 	);
 }
 
-export { LoginControl as Greeting };
+// можно воспользоваться тернаркой
+
+function render2() {
+	const isLoggedIn = this.state.isLoggedIn;
+	return (
+		<div>
+			Пользователь <b>{isLoggedIn ? "сейчас" : "не"}</b> на сайте
+		</div>
+	);
+}
+
+// можно и с выражениями в тернарке, но тут не очевидно
+
+function render2() {
+	const isLoggedIn = this.state.isLoggedIn;
+	return <div>{isLoggedIn ? <LogoutButton onClick={this.handleLogoutClick} /> : <LoginButton onClick={this.handleLoginClick} />}</div>;
+}
+
+// в каких-то случаях требуется предотвратить рендеринг
+// для этого нужно вернуть null
+
+function getRandom() {
+	return Math.floor(Math.random() * 2);
+}
+
+function WarningBanner(props) {
+	// 0 или 1
+
+	if (getRandom()) {
+		return null;
+	}
+	return <div className="warning">Предупреждение!</div>;
+}
+
+// сам факт возврата никак не влияет на срабатывание методов жизненного цикла компонента
+// например componentDidUpdate будет всё равно вызван
+
+export { LoginControl as Greeting, WarningBanner };
