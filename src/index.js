@@ -6,6 +6,7 @@ import { Clock } from "./clock";
 import { Toggle } from "./events";
 import { Greeting, WarningBanner } from "./conditionalRender";
 import { ulItems, listItems, NumberList, Post } from "./listsKeys";
+import { NameForm, EasyForm, FlavorForm, Reservation } from "./forms";
 
 // допустим есть div в html файле
 // <div id="root"></div>
@@ -33,7 +34,7 @@ let tick = function tick() {
 	);
 	root.render(element);
 };
-let interval = setInterval(tick, 5e2);
+// let interval = setInterval(tick, 5e2);
 // реакт обновляет только то, что необходимо!!
 // setTimeout(() => {
 // 	clearInterval(interval);
@@ -97,14 +98,23 @@ tick = function tick() {
 // }, 8e3);
 
 // setTimeout(() => {
-const numbers = [5, 4, 3, 2, 1];
+// const numbers = [5, 4, 3, 2, 1];
+// root.render(
+// 	<div>
+// 		{listItems}
+// 		<NumberList numbers={numbers} />
+// 		<Post key={123} />
+// 	</div>
+// );
+// }, 9e3);
+
 root.render(
 	<div>
-		{listItems}
-		<NumberList numbers={numbers} />
-		<Post key={123} />
+		<NameForm />
+		<EasyForm />
+		<FlavorForm />
+		<Reservation />
 	</div>
 );
-// }, 9e3);
 
 console.log(WarningBanner());
