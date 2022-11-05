@@ -5,6 +5,7 @@ import { element, App, Comment } from "./components";
 import { Clock } from "./clock";
 import { Toggle } from "./events";
 import { Greeting, WarningBanner } from "./conditionalRender";
+import { ulItems, listItems, NumberList, Post } from "./listsKeys";
 
 // допустим есть div в html файле
 // <div id="root"></div>
@@ -34,27 +35,27 @@ let tick = function tick() {
 };
 let interval = setInterval(tick, 5e2);
 // реакт обновляет только то, что необходимо!!
-setTimeout(() => {
-	clearInterval(interval);
-	root.render(element);
-}, 2e3);
+// setTimeout(() => {
+// 	clearInterval(interval);
+// 	root.render(element);
+// }, 2e3);
 
-setTimeout(() => {
-	root.render(App());
-}, 3e3);
+// setTimeout(() => {
+// 	root.render(App());
+// }, 3e3);
 
-setTimeout(() => {
-	root.render(
-		Comment({
-			user: {
-				name: "User",
-				avatarUrl: "URL",
-			},
-			text: "Some text",
-			date: Date.now(),
-		})
-	);
-}, 4e3);
+// setTimeout(() => {
+// 	root.render(
+// 		Comment({
+// 			user: {
+// 				name: "User",
+// 				avatarUrl: "URL",
+// 			},
+// 			text: "Some text",
+// 			date: Date.now(),
+// 		})
+// 	);
+// }, 4e3);
 
 // несмотря на то, что мы создаём элемент, описывающий всё UI дерево,
 // каждую секунду React DOM изменяет только текстовый узел, содержимое которое изменилось
@@ -69,11 +70,11 @@ tick = function tick() {
 	root.render(<Clock />);
 };
 
-setTimeout(() => {
-	interval = setInterval(() => {
-		tick();
-	}, 1e3);
-}, 5e3);
+// setTimeout(() => {
+// 	interval = setInterval(() => {
+// 		tick();
+// 	}, 1e3);
+// }, 5e3);
 
 // проблема, компонент Clock не обновляет себя каждую секунду автоматически
 // в идеале хочется чтобы Clock сам себя обновлял
@@ -82,17 +83,28 @@ setTimeout(() => {
 // «Состояние» очень похоже на уже знакомые нам пропсы,
 // отличие в том, что состояние контролируется и доступно только конкретному компоненту.
 
-setTimeout(() => {
-	clearInterval(interval);
-	root.render(<Clock />);
-}, 6e3);
+// setTimeout(() => {
+// 	clearInterval(interval);
+// 	root.render(<Clock />);
+// }, 6e3);
 
-setTimeout(() => {
-	root.render(<Toggle />);
-}, 7e3);
+// setTimeout(() => {
+// 	root.render(<Toggle />);
+// }, 7e3);
 
-setTimeout(() => {
-	root.render(<Greeting isLoggedIn={false} />);
-}, 8e3);
+// setTimeout(() => {
+// 	root.render(<Greeting isLoggedIn={false} />);
+// }, 8e3);
+
+// setTimeout(() => {
+const numbers = [5, 4, 3, 2, 1];
+root.render(
+	<div>
+		{listItems}
+		<NumberList numbers={numbers} />
+		<Post key={123} />
+	</div>
+);
+// }, 9e3);
 
 console.log(WarningBanner());

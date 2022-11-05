@@ -91,7 +91,7 @@ function Mailbox(props) {
 
 // можно воспользоваться тернаркой
 
-function render2() {
+function render() {
 	const isLoggedIn = this.state.isLoggedIn;
 	return (
 		<div>
