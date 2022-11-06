@@ -114,6 +114,11 @@ root.render(
 		<EasyForm />
 		<FlavorForm />
 		<Reservation />
+		<h2>Неуправляемый компонент</h2>
+		<input type="text" value="123" />
+		<h2>Управляемый компонент</h2>
+		<input type="text" value={null} />
+		<input type="text" value={undefined} />
 	</div>
 );
 
