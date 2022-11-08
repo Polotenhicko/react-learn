@@ -7,6 +7,7 @@ import { Toggle } from "./events";
 import { Greeting, WarningBanner } from "./conditionalRender";
 import { ulItems, listItems, NumberList, Post } from "./listsKeys";
 import { NameForm, EasyForm, FlavorForm, Reservation } from "./forms";
+import { Calculator } from "./stateUp";
 
 // допустим есть div в html файле
 // <div id="root"></div>
@@ -108,18 +109,20 @@ tick = function tick() {
 // );
 // }, 9e3);
 
-root.render(
-	<div>
-		<NameForm />
-		<EasyForm />
-		<FlavorForm />
-		<Reservation />
-		<h2>Неуправляемый компонент</h2>
-		<input type="text" value="123" />
-		<h2>Управляемый компонент</h2>
-		<input type="text" value={null} />
-		<input type="text" value={undefined} />
-	</div>
-);
+// root.render(
+// 	<div>
+// 		<NameForm />
+// 		<EasyForm />
+// 		<FlavorForm />
+// 		<Reservation />
+// 		<h2>Неуправляемый компонент</h2>
+// 		<input type="text" value="123" />
+// 		<h2>Управляемый компонент</h2>
+// 		<input type="text" value={null} />
+// 		<input type="text" value={undefined} />
+// 	</div>
+// );
 
-console.log(WarningBanner());
+// console.log(WarningBanner());
+
+root.render(<Calculator />);
