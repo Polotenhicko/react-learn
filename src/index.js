@@ -8,6 +8,7 @@ import { Greeting, WarningBanner } from "./conditionalRender";
 import { ulItems, listItems, NumberList, Post } from "./listsKeys";
 import { NameForm, EasyForm, FlavorForm, Reservation } from "./forms";
 import { Calculator } from "./stateUp";
+import { SignUpDialog } from "./compositionVsinherits";
 
 // допустим есть div в html файле
 // <div id="root"></div>
@@ -20,7 +21,7 @@ import { Calculator } from "./stateUp";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
-root.render(greeting);
+// root.render(greeting);
 
 // элементы в React иммутабельны
 // после создания элемента нельзя изменить его потомков или атрибуты
@@ -125,4 +126,6 @@ tick = function tick() {
 
 // console.log(WarningBanner());
 
-root.render(<Calculator />);
+// root.render(<Calculator />);
+
+root.render(<SignUpDialog testString={"123"} testNumber={123} />);
