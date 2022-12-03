@@ -9,6 +9,7 @@ import { ulItems, listItems, NumberList, Post } from "./listsKeys";
 import { NameForm, EasyForm, FlavorForm, Reservation } from "./forms";
 import { Calculator } from "./stateUp";
 import { SignUpDialog } from "./compositionVsinherits";
+import { FilterableProductTable } from "./reactPhilosophy";
 
 // допустим есть div в html файле
 // <div id="root"></div>
@@ -128,4 +129,15 @@ tick = function tick() {
 
 // root.render(<Calculator />);
 
-root.render(<SignUpDialog testString={"123"} testNumber={123} />);
+// root.render(<SignUpDialog testString={"123"} testNumber={123} />);
+
+const PRODUCTS = [
+	{ category: "Sporting Goods", price: "$49.99", stocked: true, name: "Football" },
+	{ category: "Sporting Goods", price: "$9.99", stocked: true, name: "Baseball" },
+	{ category: "Sporting Goods", price: "$29.99", stocked: false, name: "Basketball" },
+	{ category: "Electronics", price: "$99.99", stocked: true, name: "iPod Touch" },
+	{ category: "Electronics", price: "$399.99", stocked: false, name: "iPhone 5" },
+	{ category: "Electronics", price: "$199.99", stocked: true, name: "Nexus 7" },
+];
+
+root.render(<FilterableProductTable products={PRODUCTS} />);
