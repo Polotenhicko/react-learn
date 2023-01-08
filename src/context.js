@@ -29,7 +29,7 @@ let Toolbar = function Toolbar(props) {
 
 let ThemeButton = class ThemeButton extends React.Component {
   render() {
-    return <Button theme={this.props.theme} />;
+    return <button theme={this.props.theme} />;
   }
 };
 
@@ -39,7 +39,7 @@ let ThemeButton = class ThemeButton extends React.Component {
 // на каждом уровне. Создадим контекст для текущей
 // UI-темы (со значением "light" по умолчанию).
 
-const ThemeContext = React.createContext('light');
+let ThemeContext = React.createContext('light');
 
 let App = class App extends React.Component {
   render() {
@@ -72,7 +72,7 @@ ThemeButton = class ThemeButton extends React.Component {
   // В этом примере значение UI-темы будет "dark".
   static contextType = ThemeContext;
   render() {
-    return <Button theme={this.context} />;
+    return <button theme={this.context} />;
   }
 };
 
@@ -105,15 +105,15 @@ ThemeButton = class ThemeButton extends React.Component {
 // Один из способов решить эту проблему без контекста — передать вниз сам компонент Avatar,
 // в случае чего промежуточным компонентам не нужно знать о пропсах user и avatarSize:
 
-let page = function page(props) {
-  const user = props.user;
-  const userLink = (
-    <Link href={user.permalink}>
-      <Avatar user={user} size={props.avatarSize} />
-    </Link>
-  );
-  return <PageLayout userLink={userLink} />;
-};
+// let Page = function page(props) {
+//   const user = props.user;
+//   const userLink = (
+//     <Link href={user.permalink}>
+//       <Avatar user={user} size={props.avatarSize} />
+//     </Link>
+//   );
+//   return <PageLayout userLink={userLink} />;
+// };
 
 // Теперь, это выглядит так:
 {
@@ -137,19 +137,19 @@ let page = function page(props) {
 // Вы не ограничены в передаче строго одного компонента.
 // Вы можете передать несколько дочерних компонентов или, даже, создать для них разные «слоты»
 
-page = function Page(props) {
-  const user = props.user;
-  const content = <Feed user={user} />;
-  const topBar = (
-    <NavigationBar>
-      <Link href={user.permaLink}>
-        <Avatar user={user} size={props.avatarSize} />
-      </Link>
-    </NavigationBar>
-  );
+// let Page = function Page(props) {
+//   const user = props.user;
+//   const content = <Feed user={user} />;
+//   const topBar = (
+//     <NavigationBar>
+//       <Link href={user.permaLink}>
+//         <Avatar user={user} size={props.avatarSize} />
+//       </Link>
+//     </NavigationBar>
+//   );
 
-  return <PageLayout topBar={topBar} content={content} />;
-};
+//   return <PageLayout topBar={topBar} content={content} />;
+// };
 
 // Этого паттерна достаточно для большинства случаев, когда вам необходимо отделить дочерний компонент
 // от его промежуточных родителей.Вы можете пойти ещё дальше, используя рендер - пропсы, я хз чо это
@@ -202,6 +202,7 @@ class MyClass extends React.Component {
   }
   render() {
     let value = this.context;
+    return <div></div>;
     /* отрендерить что-то, используя значение MyContext */
   }
 }
@@ -225,3 +226,130 @@ MyClass.contextType = MyContext;
 
 // Объекту Context можно задать строковое свойство displayName. React DevTools использует это свойство при отображении контекста.
 MyContext.displayName = 'MyDisplayName';
+
+// Динамический контекст
+// типо экспортируем и импортируем сюда
+
+// theme-context.js
+const themes = {
+  light: {
+    foreground: '#000000',
+    background: '#eeeeee',
+  },
+  dark: {
+    foreground: '#ffffff',
+    background: '#222222',
+  },
+};
+
+ThemeContext = React.createContext(themes.dark);
+
+// themed-button.js
+// export
+class ThemedButton extends React.Component {
+  static contextType = ThemeContext;
+  render() {
+    const props = this.props;
+    const theme = this.context;
+    return <button {...props} style={{ backgroundColor: theme.background }} />;
+  }
+}
+
+// app.js
+
+// промежуточный компонент
+Toolbar = function Toolbar(props) {
+  return <ThemedButton onClick={props.changeTheme}>Change Theme</ThemedButton>;
+};
+
+App = class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      theme: themes.light,
+    };
+
+    this.toggleTheme = () => {
+      this.setState((state) => ({
+        theme: state.theme === themes.light ? themes.dark : themes.light,
+      }));
+    };
+  }
+
+  render() {
+    // ThemedButton внутри ThemeProvider использует
+    // значение светлой UI-темы из состояния, в то время как
+    // ThemedButton, который находится вне ThemeProvider,
+    // использует тёмную UI-тему из значения по умолчанию
+    // пример говна короче
+    return (
+      <div>
+        <ThemeContext.Provider value={this.state.theme}>
+          <Toolbar changeTheme={this.toggleTheme} />
+        </ThemeContext.Provider>
+        <div>
+          <ThemedButton />
+        </div>
+      </div>
+    );
+  }
+};
+
+// Довольно часто необходимо изменить контекст из компонента, который находится где-то глубоко в дереве компонентов.
+// В этом случае вы можете добавить в контекст функцию, которая позволит потребителям изменить значение этого контекста:
+
+const ThemeContextNew = React.createContext({
+  theme: themes.dark,
+  toggleTheme: () => {},
+});
+
+function ThemeTogglerButton() {
+  // ThemeTogglerButton получает из контекста
+  // не только значение UI-темы, но и функцию toggleTheme.
+  return (
+    <ThemeContextNew.Consumer>
+      {({ theme, toggleTheme }) => (
+        <button onClick={toggleTheme} style={{ backgroundColor: theme.background }}>
+          Toggle Theme
+        </button>
+      )}
+    </ThemeContextNew.Consumer>
+  );
+}
+
+App = class App extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.toggleTheme = () => {
+      this.setState((state) => ({
+        theme: state.theme === themes.dark ? themes.light : themes.dark,
+      }));
+    };
+
+    // Состояние хранит функцию для обновления контекста,
+    // которая будет также передана в Provider-компонент.
+    this.state = {
+      theme: themes.light,
+      toggleTheme: this.toggleTheme,
+    };
+  }
+
+  render() {
+    return (
+      <ThemeContextNew.Provider value={this.state}>
+        <Content />
+      </ThemeContextNew.Provider>
+    );
+  }
+};
+
+function Content() {
+  return (
+    <div>
+      <ThemeTogglerButton />
+    </div>
+  );
+}
+
+export { App };
