@@ -5,4 +5,4 @@ import * as Divide from './divideCode';
 import { App as Context } from './context';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<Context />);
+root.render(<div />);

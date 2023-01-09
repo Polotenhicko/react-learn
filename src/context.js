@@ -352,4 +352,91 @@ function Content() {
   );
 }
 
+// Чтобы последующие рендеры (связанные с контекстом) были быстрыми,
+// React делает каждого потребителя контекста отдельным компонентом в дереве.
+
+// контекст UI-темы со светлым значением по умолчанию
+const ThemeContext2 = React.createContext('light');
+
+// контекст активного пользователя
+const UserContext = React.createContext({
+  name: 'Guest',
+});
+
+App = class App extends React.Component {
+  render() {
+    const { signedInUser, theme } = this.props;
+    // компонент App, который предоставляет начальные значения контекстов
+    return (
+      <ThemeContext2.Provider value={theme}>
+        <UserContext.Provider value={signedInUser}>
+          <Layout />
+        </UserContext.Provider>
+      </ThemeContext2.Provider>
+    );
+  }
+};
+
+function Layout() {
+  return (
+    <div>
+      <aside></aside>
+      <Content2 />
+    </div>
+  );
+}
+
+function ProfilePage() {}
+
+function Content2() {
+  return (
+    <ThemeContext2.Consumer>
+      {(theme) => (
+        <UserContext.Consumer>
+          {(user) => <ProfilePage user={user} theme={theme} />}
+        </UserContext.Consumer>
+      )}
+    </ThemeContext2.Consumer>
+  );
+}
+
+// Если два или более значений контекста часто используются вместе, возможно,
+// вам стоит рассмотреть создание отдельного компонента, который будет передавать оба значения дочерним компонентам
+//  с помощью паттерна «рендер - пропс».
+
+// Контекст использует сравнение по ссылкам, чтобы определить, когда запускать последующий рендер
+// Из-за этого существуют некоторые подводные камни, например, случайные повторные рендеры потребителей,
+// при перерендере родителя Provider - компонента
+
+//  В следующем примере будет происходить повторный рендер потребителя каждый повторный рендер Provider-компонента,
+// потому что новый объект, передаваемый в value, будет создаваться каждый раз:
+
+App = class App extends React.Component {
+  render() {
+    return (
+      <MyContext.Provider value={{ something: 'something' }}>
+        <div></div>
+      </MyContext.Provider>
+    );
+  }
+};
+
+// Один из вариантов решения этой проблемы — хранение этого объекта в состоянии родительского компонента:
+
+App = class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      value: { something: 'something' },
+    };
+  }
+
+  render() {
+    return (
+      <MyContext.Provider value={this.state.value}>
+        <div></div>
+      </MyContext.Provider>
+    );
+  }
+};
 export { App };
