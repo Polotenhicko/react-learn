@@ -180,3 +180,83 @@ function logProps2(InputComponent) {
 }
 const WrappedTest = logProps2(CommentList);
 export { WrappedTest };
+
+// Соглашение: передавайте посторонние пропсы оборачиваемому компоненту
+// HOC добавляют компонентам функциональность, но они не должны менять их оригинальное предназначение
+
+// Пропсы, которые напрямую не связаны с функциональностью HOC, должны передаваться без изменений оборачиваемому компоненту.
+
+function render1(props) {
+  // отфильтровываем пропсы
+  const { extraProp, ...otherProps } = props;
+
+  const injectedProp = 'some prop' + extraProp;
+  return <InputComponent injectedProp={injectedProp} {...otherProps} />;
+}
+
+// Соглашение: Максимизируем композитивность
+
+// Не все HOC выглядят одинаково. Некоторые принимают всего лишь один аргумент — оборачиваемый компонент:
+
+function withRouter(Component) {
+  return (
+    <div>
+      <Component />
+    </div>
+  );
+}
+
+function Navbar() {
+  return <nav>123</nav>;
+}
+
+const config = {
+  aboba: 2,
+};
+
+const NavbarWithRouter = withRouter(Navbar);
+const NavbarWithRouter2 = withRouter(Navbar, config);
+// Может быть и несколько параметров
+
+// Самый распространённый способ вызвать HOC:
+// `connect` из React Redux
+function connect() {
+  return function () {};
+}
+const ConnectedComment = connect('commentSelector', 'commentAction')(CommentList);
+
+// Другими словами, connect — это функция высшего порядка, которая возвращает компонент высшего порядка!
+
+// Вместо этого...
+let EnhancedComponent = withRouter(connect(commentSelector)(WrappedComponent));
+
+// вот тут максимально не понятно
+// ... вы можете воспользоваться вспомогательной совмещающей функцией
+// compose(f, g, h) идентичен (...args) => f(g(h(...args)))
+const enhance = compose(
+  // Оба параметра являются HOC и принимают один единственный аргумент
+  withRouter,
+  connect(commentSelector)
+);
+EnhancedComponent = enhance(WrappedComponent);
+
+// Соглашение: добавьте отображаемое имя для лёгкой отладки
+// Созданные HOC компоненты-контейнеры отображаются в консоли инструментов разработки React наряду с другими компонентами
+
+// Самый распространённый способ — это обернуть имя оборачиваемого компонента. Например, если вы назвали компонент
+// высшего порядка withSubscription, а имя оборачиваемого компонента было CommentList,
+// то отображаемое имя будет WithSubscription(CommentList):
+
+function withSubscription2(WComponent) {
+  class WithSubscription extends Component {
+    render() {
+      return <div></div>;
+    }
+  }
+  WithSubscription.displayName = `WithSubscription(${getDisplayName(WComponent)})`;
+  return WithSubscription;
+}
+
+function getDisplayName(Component) {
+  return Component.displayName || WrappedComponent.name || 'Component';
+}
