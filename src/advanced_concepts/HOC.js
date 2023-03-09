@@ -22,6 +22,7 @@ const DataSource = {
   getComments() {
     return this.comments;
   },
+  addChangeListener() {},
 };
 
 class CommentList extends Component {
@@ -53,7 +54,7 @@ class CommentList extends Component {
     return (
       <div>
         {this.state.comments.map((comment) => (
-          <Comment comment={comment} key={comment.id} />
+          <div key={comment.id}>{comment.text}</div>
         ))}
       </div>
     );
@@ -146,3 +147,36 @@ function withSubscription(WrappedComponent, selectData) {
 
 // HOC ничего не меняет и не меняет поведение оборачиваемого компонента
 // HOC является чистой функцией без побочных эффектов
+
+// не нужно мутировать оборачиваемый компонент!!
+
+function logProps(InputComponent) {
+  InputComponent.prototype.componentDidUpdate = function (prevProps) {
+    console.log(`Текущие пропсы: ${this.props}`);
+    console.log(`Предыдущие пропсы: ${prevProps}`);
+  };
+  return InputComponent;
+}
+
+// // EnhancedComponent будет печатать в консоль при каждом изменении пропсов
+// const EnhancedComponent = logProps(InputComponent);
+
+// но теперь мы не можем отдельно использовать InputComponent от EnchancedComponent
+// и наш EnchancedComponent не работает с функциональными компонентами
+
+// лучше вместо этого применять композицию
+
+function logProps2(InputComponent) {
+  return class extends Component {
+    componentDidUpdate(prevProps) {
+      console.log(`Текущие пропсы: ${this.props}`);
+      console.log(`Предыдущие пропсы: ${prevProps}`);
+    }
+
+    render() {
+      return <InputComponent {...this.props} />;
+    }
+  };
+}
+const WrappedTest = logProps2(CommentList);
+export { WrappedTest };
