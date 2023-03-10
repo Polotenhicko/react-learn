@@ -1,3 +1,6 @@
+import { Component } from 'react';
+import hoistNonReactStatics from 'hoist-non-react-statics';
+
 // Компонент высшего порядка (Higher-Order Component, HOC) — это один из продвинутых способов для повторного использования логики
 // HOC не являются частью API React
 
@@ -259,4 +262,82 @@ function withSubscription2(WComponent) {
 
 function getDisplayName(Component) {
   return Component.displayName || WrappedComponent.name || 'Component';
+}
+
+// Предостережения
+// Не используйте HOC внутри рендер-метода
+
+// Всё из-за сравнения перед рендером, если мы в рендере создадим заново HOC, то будет новый рендер
+
+function Test(props) {
+  const HOC = logProps2(CommentList);
+  // будет всегда перерендеривать, т.к. ссылка поменялась
+  return <HOC {...props} />;
+}
+// проблема также в том, что будет обновляться его стейт, а также дочерних компонентов
+// но вроде бы в редких случаях можно применить хок в жизненных циклах компонента
+
+// Копируйте статические методы
+// Иногда бывает полезно определить статические методы компонента
+
+// Когда мы применяем HOC, то заворачиваем оригинальный компонент в контейнер.
+// Поэтому у нового компонента не будет статических методов оригинального компонента.
+
+CommentList.staticMethod = function () {
+  console.log('статический метод');
+};
+
+const HOC = logProps2(CommentList);
+typeof HOC.staticMethod == 'undefined'; // true
+
+// будем копировать
+
+function logProps3(WComponent) {
+  class LogProps extends Component {}
+  // и тут только знать какие именно метода копировать
+  LogProps.staticMethod = WComponent.staticMethod;
+  return LogProps;
+}
+
+// можно воспользоваться hoist-non-react-statics, копирует не связанные с реакт статические методы
+
+function logProps4(WComponent) {
+  class LogProps extends Component {}
+  hoistNonReactStatics(LogProps, WComponent);
+  return LogProps;
+}
+
+// Другое возможное решение — экспортировать статические методы отдельно от компонента.
+
+function staticMethod() {
+  console.log('статический метод');
+}
+
+CommentList.staticMethod = staticMethod;
+
+// отдельно экспортируем метод
+export { staticMethod };
+
+// Рефы не передаются
+// По соглашению компоненты высшего порядка передают оборачиваемому компоненту все пропсы,
+// кроме рефов.ref на самом деле не проп, как, например, key, и поэтому иначе обрабатывается React.
+
+function logProps5(WComponent) {
+  class LogProps extends React.Component {
+    componentDidUpdate(prevProps) {
+      console.log('old props:', prevProps);
+      console.log('new props:', this.props);
+    }
+
+    render() {
+      const { forwardedRef, ...rest } = this.props;
+
+      // Передаём в качестве рефа проп "forwardedRef"
+      return <Component ref={forwardedRef} {...rest} />;
+    }
+  }
+
+  return React.forwardRef((props, ref) => {
+    return <WComponent {...props} forwardedRef={ref} />;
+  });
 }
