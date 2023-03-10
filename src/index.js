@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM, { createRoot } from 'react-dom/client';
-import { WrappedTest } from './advanced_concepts/HOC';
+import { App } from './advanced_concepts/HOC_duty';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<WrappedTest />);
+root.render(<App />);

@@ -1,10 +1,8 @@
-import { Component } from 'react';
+import React from 'react';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 
 // Компонент высшего порядка (Higher-Order Component, HOC) — это один из продвинутых способов для повторного использования логики
 // HOC не являются частью API React
-
-const { Component } = require('react');
 
 // компонент высшего порядка — это функция, которая принимает компонент и возвращает новый компонент
 // Традиционные компоненты подразумевают многократное использование, но не позволяют с лёгкостью решить некоторые проблемы.
@@ -28,7 +26,7 @@ const DataSource = {
   addChangeListener() {},
 };
 
-class CommentList extends Component {
+class CommentList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -66,7 +64,7 @@ class CommentList extends Component {
 
 // и есть ещё компонент с похожей реализацией
 
-class BlogPost extends Component {
+class BlogPost extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -120,7 +118,7 @@ const BlogPostWithSubscription = withSubscription(BlogPost, (DataSource, props) 
 
 function withSubscription(WrappedComponent, selectData) {
   // возвращает новый компонент
-  return class extends Component {
+  return class extends React.Component {
     constructor(props) {
       super(props);
       this.state = {
@@ -170,7 +168,7 @@ function logProps(InputComponent) {
 // лучше вместо этого применять композицию
 
 function logProps2(InputComponent) {
-  return class extends Component {
+  return class extends React.Component {
     componentDidUpdate(prevProps) {
       console.log(`Текущие пропсы: ${this.props}`);
       console.log(`Предыдущие пропсы: ${prevProps}`);
@@ -201,10 +199,10 @@ function render1(props) {
 
 // Не все HOC выглядят одинаково. Некоторые принимают всего лишь один аргумент — оборачиваемый компонент:
 
-function withRouter(Component) {
+function withRouter(WComponent) {
   return (
     <div>
-      <Component />
+      <WComponent />
     </div>
   );
 }
@@ -251,7 +249,7 @@ EnhancedComponent = enhance(WrappedComponent);
 // то отображаемое имя будет WithSubscription(CommentList):
 
 function withSubscription2(WComponent) {
-  class WithSubscription extends Component {
+  class WithSubscription extends React.Component {
     render() {
       return <div></div>;
     }
@@ -260,8 +258,8 @@ function withSubscription2(WComponent) {
   return WithSubscription;
 }
 
-function getDisplayName(Component) {
-  return Component.displayName || WrappedComponent.name || 'Component';
+function getDisplayName(WComponent) {
+  return WComponent.displayName || WComponent.name || 'Component';
 }
 
 // Предостережения
@@ -293,7 +291,7 @@ typeof HOC.staticMethod == 'undefined'; // true
 // будем копировать
 
 function logProps3(WComponent) {
-  class LogProps extends Component {}
+  class LogProps extends React.Component {}
   // и тут только знать какие именно метода копировать
   LogProps.staticMethod = WComponent.staticMethod;
   return LogProps;
@@ -302,7 +300,7 @@ function logProps3(WComponent) {
 // можно воспользоваться hoist-non-react-statics, копирует не связанные с реакт статические методы
 
 function logProps4(WComponent) {
-  class LogProps extends Component {}
+  class LogProps extends React.Component {}
   hoistNonReactStatics(LogProps, WComponent);
   return LogProps;
 }
@@ -333,7 +331,7 @@ function logProps5(WComponent) {
       const { forwardedRef, ...rest } = this.props;
 
       // Передаём в качестве рефа проп "forwardedRef"
-      return <Component ref={forwardedRef} {...rest} />;
+      return <WComponent ref={forwardedRef} {...rest} />;
     }
   }
 
