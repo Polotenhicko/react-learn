@@ -242,4 +242,6 @@ FriendStatusWithCounter = function FriendStatusWithCounter(props) {
 // но только из области видимости компонента
 
 // если нужно выполнить код только при монтировании и размонтировании, то нужно передать пустой массив []
-export { Example };
+
+// useLayoutEffect
+// идентичен useEffect, но запускается синхронно после всех изменений DOM
