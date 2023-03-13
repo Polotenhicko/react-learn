@@ -49,3 +49,30 @@ App = function App() {
   );
 };
 export { App };
+
+// ещё пример
+function App2() {
+  // функция
+  const f = () => 123;
+  // реф берёт эту функцию
+  const ref = React.useRef(f);
+  // стейт просто для обновления
+  const [count, setCount] = React.useState(0);
+  // при первом рендере будет true, при последующих false, т.к. функция будет заново создаваться,
+  // а ref хранит ссылку на первую функцию
+  console.log(ref.current == f, 1);
+  React.useEffect(() => {
+    // при монтировании будет true, т.к. f замыкается на первой созданной функции
+    // при последующих вызывается метод render, и функция заново создаётся
+    console.log(ref.current == f, 2);
+    setCount(count + 1);
+  }, []);
+  return (
+    <div className="App">
+      <h1>Hello CodeSandbox</h1>
+      <h2>Start editing to see some magic happen!</h2>
+    </div>
+  );
+}
+
+// а вроде это реализуется всё на стейте
