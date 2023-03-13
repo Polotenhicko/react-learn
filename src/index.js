@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM, { createRoot } from 'react-dom/client';
-import App from './hooks/hookContext';
+import { App } from './hooks/hookRef';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(<App />);
