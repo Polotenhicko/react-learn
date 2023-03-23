@@ -1,7 +1,6 @@
 import React from 'react';
-import ReactDOM, { createRoot } from 'react-dom/client';
-import { App } from './advanced_concepts/coop_library';
-window.$ = window.jQuery = require('jquery');
+import ReactDOM from 'react-dom/client';
+import { App, HelloButton } from './advanced_concepts/coop_library';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<App />);
+root.render(<HelloButton />);
