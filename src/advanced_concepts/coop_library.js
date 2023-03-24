@@ -1,5 +1,7 @@
 import React from 'react';
 import jQuery from 'jquery';
+import Backbone from 'backbone';
+import ReactDOM from 'react-dom/client';
 
 // не скачался chose, вот жопа вместо него
 const $ = function (...args) {
@@ -147,3 +149,145 @@ export { HelloButton };
 // Ниже мы создадим Backbone-представление ParagraphView
 // Оно переопределит метод render() (из Backbone.View) для рендеринга React-компонента <Paragraph> в DOM-элемент,
 // предоставляемый Backbone (this.el). Также мы воспользуемся ReactDOM.createRoot():
+
+function Paragraph(props) {
+  return <p>{props.text}</p>;
+}
+
+const ParagraphView = Backbone.View.extend({
+  initialize(options) {
+    this.reactRoot = ReactDOM.createRoot(this.el);
+  },
+  render() {
+    const text = this.model.get('text');
+    this.reactRoot.render(<Paragraph text={text} />);
+    return this;
+  },
+  remove() {
+    this.reactRoot.unmount();
+    Backbone.View.prototype.remove.call(this);
+  },
+});
+
+// Стоит отметить важность вызова root.unmount() в методе remove.
+// Он нужен для того, чтобы React отключил обработчики событий и другие ресурсы, связанные с деревом компонентов при удалении.
+
+// Использование моделей Backbone в React-компонентах
+// Самый простой способ использовать модели и коллекции Backbone из React-компонентов — это обработка различных событий и
+// ручное обновление компонентов.
+
+// Компоненты, отвечающие за рендеринг моделей, будут обрабатывать событие 'change', а компоненты, отвечающие за рендеринг коллекций,
+// будут обрабатывать события 'add' и 'remove'.В обоих случаях для отображения новых данных нужно вызвать this.forceUpdate().
+
+// В следующем примере компонент list рендерит Backbone-коллекцию, используя компонент Item для рендеринга отдельных элементов.
+
+class Item extends React.Component {
+  handleChange = () => {
+    this.forceUpdate();
+  };
+
+  componentDidMount() {
+    this.props.model.on('change', this.handleChange);
+  }
+
+  componentWillUnmount() {
+    this.props.model.off('change');
+  }
+
+  render() {
+    return <li>{this.props.model.get('text')}</li>;
+  }
+}
+
+class List extends React.Component {
+  handleChange() {
+    this.forceUpdate();
+  }
+
+  componentDidMount() {
+    this.props.collection.on('add', 'remove', this.handleChange);
+  }
+
+  componentWillUnmount() {
+    this.props.collection.off('add', 'remove', this.handleChange);
+  }
+
+  render() {
+    return (
+      <ul>
+        {this.props.collection.map((model) => (
+          <Item key={model.cid} model={model} />
+        ))}
+      </ul>
+    );
+  }
+}
+
+// Вынос данных из моделей Backbone
+
+// Один из подходов — когда при каждом изменении модели, вы извлекаете её атрибуты в виде простых данных и храните всю логику
+// в одном месте.Следующий компонент высшего порядка извлекает все атрибуты Backbone - модели в state, передавая данные
+// в оборачиваемый компонент.
+
+// При этом подходе только компоненты высшего порядка будут знать о Backbone-моделях,
+// а большая часть компонентов в приложении не будет завязана на Backbone.
+
+function conectToBackboneModel(WComponent) {
+  return class BackBoneComponent extends React.Component {
+    constructor(props) {
+      super(props);
+      this.state = Object.assign({}, props.model.attributes);
+    }
+
+    componentDidMount() {
+      this.props.model.on('change', this.handleChange);
+    }
+
+    componentWillReceiveProps(nextProps) {
+      this.setState(Object.assign({}, nextProps.model.attributes));
+      if (nextProps.model !== this.props.model) {
+        this.props.model.off('change', this.handleChange);
+        nextProps.model.on('change', this.handleChange);
+      }
+    }
+
+    componentWillUnmount() {
+      this.props.model.off('change', this.handleChange);
+    }
+
+    handleChange = (model) => {
+      this.setState(model.changedAttributes());
+    };
+
+    render() {
+      const propsExceptModel = Object.assign({}, this.props);
+      delete propsExceptModel.model;
+      return <WComponent {...propsExceptModel} {...this.state} />;
+    }
+  };
+}
+
+// Для демонстрации использования мы соединим React-компонент NameInput и Backbone-модель и будем обновлять её атрибут firstName
+// при каждом изменении поля ввода:
+
+function NameInput(props) {
+  return (
+    <p>
+      <input value={props.firstName} onChange={props.handleChange} />
+      <br />
+      Моё имя - {props.firstName}
+    </p>
+  );
+}
+
+const BackBoneNameInput = conectToBackboneModel(NameInput);
+
+function Example(props) {
+  const handleChange = (e) => props.model.set('firstName', e.target.value);
+
+  return <BackBoneNameInput model={props.model} handleChange={handleChange} />;
+}
+
+const model = new Backbone.Model({ firstName: 'Фродо' });
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<Example model={model} />);
