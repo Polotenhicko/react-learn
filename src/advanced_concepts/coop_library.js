@@ -289,5 +289,5 @@ function Example(props) {
 }
 
 const model = new Backbone.Model({ firstName: 'Фродо' });
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<Example model={model} />);
+// const root = ReactDOM.createRoot(document.getElementById('root'));
+// root.render(<Example model={model} />);
