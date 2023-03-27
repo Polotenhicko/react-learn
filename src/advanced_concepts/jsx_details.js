@@ -152,3 +152,121 @@ function UseButton() {
 
 // Атрибуты расширения могут быть полезны, однако, также они позволяют передать
 // ненужные пропсы в компоненты или невалидные HTML - атрибуты в DOM.
+
+// Дочерние компоненты в JSX
+// Существует несколько способов передать дочерние компоненты:
+
+// Строковые литералы
+// Если вы поместите строку между открывающим и закрывающим тегом, то props.children будет равно этой строке
+
+<FooComponent>
+  fff<div>123</div>
+</FooComponent>;
+
+// children: ['fff',{$$typeof: Symbol(react.element), type: 'div', key: null, ref: null, props: {…}, …}]
+
+// JSx удаляет пустые строки и пробелы в начале и конце строки
+// Новые строки между строковых литералов сжимаются в один пробел
+
+// Остаются 2 строки в начале и в конце
+let a = ' a '; // типо так
+
+// Чтобы отобразить вложенные компоненты, можно указать несколько JSX-элементов в качестве дочерних.
+
+<FooComponent>
+  <Button />
+  <UseButton />
+</FooComponent>;
+
+// Можно смешивать разные типы потомков
+
+<FooComponent>
+  text
+  <ul>
+    <li>1</li>
+    <li>2</li>
+    <li>3</li>
+  </ul>
+</FooComponent>;
+
+// Вы можете передать любое JavaScript-выражение как дочерний компонент, обернув его в {}
+
+<FooComponent>
+  {'Пример'}
+  {2 + 2 + 3 + 'aaa'}
+</FooComponent>;
+
+// props.children - свойство, которое содержит чилдов
+// это может быть строка
+<FooComponent>Пример</FooComponent>;
+// массив из чилдов если несколько элементов
+<FooComponent>
+  {'Пример'}
+  {2 + 2 + 3 + 'aaa'}
+</FooComponent>;
+// или
+<FooComponent>
+  text
+  <ul>
+    <li>1</li>
+    <li>2</li>
+    <li>3</li>
+  </ul>
+</FooComponent>;
+// так будет Object, т.к. ul преобразуется в React.createElement
+<FooComponent>
+  <ul>
+    <li>1</li>
+    <li>2</li>
+    <li>3</li>
+  </ul>
+</FooComponent>;
+// или что передадим
+// тут строка
+<FooComponent>{'aaa'}</FooComponent>;
+// тут функция
+<FooComponent>{() => {}}</FooComponent>;
+
+// Значения false, null, undefined и true — валидные дочерние компоненты. Просто они не рендерятся
+// Эти JSX-выражения будут рендерить одно и то же:
+
+<div />;
+
+<div></div>;
+
+<div>{false}</div>;
+
+<div>{null}</div>;
+
+<div>{undefined}</div>;
+
+<div>{true}</div>;
+
+// Этот подход может быть полезным для рендера по условию.
+// Вот пример, где JSX рендерит <Header />, если showHeader равняется true:
+const showHeader = true;
+<div>
+  {showHeader && <header></header>}
+  <p>asdasd</p>
+</div>;
+
+// Есть один нюанс в том, что React будет рендерить «ложные» (falsy) значения, такие как число 0
+const props = {
+  messages: [],
+};
+
+function MessageList(props) {
+  return <div>{props.messages}</div>;
+}
+
+<div>{props.messages.length && <MessageList messages={props.messages} />}</div>;
+
+// Чтобы исправить это, убедитесь что выражение перед оператором && всегда является boolean:
+
+<div>{props.messages.length > 0 && <MessageList messages={props.messages} />}</div>;
+
+// И наоборот, если вы хотите, чтобы такие значения как false, true, null или undefined отрисовались,
+// то сначала вы должны преобразовать их в строку:
+
+const variable = false;
+<div>Моя переменная JavaScript - {String(variable)}.</div>;
