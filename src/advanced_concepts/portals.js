@@ -1,8 +1,8 @@
-import React from 'react';
-import { ReactDOM } from 'react';
+import React, { useContext } from 'react';
+import ReactDOM from 'react-dom';
 // порталы позволяют рендерить элементы в DOM-узел, который находится вне иерархии родительского компонента
 
-ReactDOM.createPortal('child', 'container');
+// ReactDOM.createPortal(child, container);
 // Первый аргумент (child) — это любой React-компонент, который может быть отрендерен, такой как элемент,
 // строка или фрагмент.Следующий аргумент(container) — это DOM - элемент.
 
@@ -40,6 +40,7 @@ function Foo2(props) {
 // Это два соседних контейнера в DOM
 const appRoot = document.getElementById('app-root');
 const modalRoot = document.getElementById('modal-root');
+const MyContext = React.createContext('light');
 
 class Modal extends React.Component {
   el = document.createElement('div');
@@ -54,5 +55,52 @@ class Modal extends React.Component {
     // состояние и рендерите потомков только тогда, когда
     // компонент Modal уже вставлен в DOM-дерево.
     modalRoot.appendChild(this.el);
+    this.el.tabIndex = -1;
+    this.el.focus();
+  }
+
+  componentWillUnmount() {
+    modalRoot.removeChild(this.el);
+  }
+
+  render() {
+    return ReactDOM.createPortal(this.props.children, this.el);
   }
 }
+
+class Parent extends React.Component {
+  state = { click: 0 };
+
+  handleClick = () => {
+    this.setState((state) => ({ click: state.click + 1 }));
+  };
+
+  render() {
+    // сработает всплытие клика, а также погрузится контекст
+    return (
+      <div onClick={this.handleClick}>
+        <p>Количество кликов: {this.state.click}</p>
+        <p>
+          Откройте DevTools браузера, чтобы убедиться, что кнопка не является потомком блока
+          div c обработчиком onClick.
+        </p>
+        <MyContext.Provider value="dark">
+          <Modal>
+            <Child />
+          </Modal>
+        </MyContext.Provider>
+      </div>
+    );
+  }
+}
+
+function Child() {
+  const context = useContext(MyContext);
+  return (
+    <div className="modal" data-class={context}>
+      <button>Кликните</button>
+    </div>
+  );
+}
+
+export default Parent;
