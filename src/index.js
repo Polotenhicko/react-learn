@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { Tick } from './advanced_concepts/es6';
+import { MyComponent } from './advanced_concepts/refs';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<Tick />);
+root.render(<MyComponent />);
