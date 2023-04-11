@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { Hello, Counter } from './hooks/hoorReucer';
+import { ForInput } from './hooks/hookImperativeHandle';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<Counter />);
+root.render(<ForInput />);
