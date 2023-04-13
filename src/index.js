@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { ForInput } from './hooks/hookImperativeHandle';
+import { App } from './hooks/hookDeferredValue';
+import { Search } from './hooks/hookTransition';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<ForInput />);
+root.render(<Search />);
