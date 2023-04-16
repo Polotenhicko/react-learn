@@ -20,16 +20,21 @@ export function Search() {
   const [comments, setComments] = useState([]);
   const [search, setSearch] = useState('');
   const [isPending, startTransition] = useTransition();
-
   const handleSearch = (e) => {
-    startTransition(() => setSearch(e.target.value));
+    startTransition(() => {
+      console.log('start transition');
+      setSearch(e.target.value);
+    });
+    // setSearch(e.target.value);
   };
+  console.log(search);
+  console.log(isPending);
 
   useEffect(() => {
     fetch('https://jsonplaceholder.typicode.com/comments/')
       .then((res) => res.json())
       .then(setComments);
-  });
+  }, []);
 
   return (
     <div>
