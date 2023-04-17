@@ -1,8 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { App } from './hooks/hookDeferredValue';
-import { Search } from './hooks/hookTransition';
-import { Sus } from './main_concepts/suspense';
+import { FriendListItem } from './hooks/userHooks';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<Search />);
+root.render(<FriendListItem friend={{ id: 3, name: 'Антон' }} />);

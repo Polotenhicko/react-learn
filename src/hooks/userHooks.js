@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 const ChatAPI = {
+  _interval: null,
   subscribeToFriendStatus(friendId, callback) {},
   unsubscribeFromFriendStatus(friendId, callback) {},
 };
@@ -28,7 +29,7 @@ function FriendStatus(props) {
 // которые сейчас в сети. Мы могли бы просто скопировать и вставить приведённую выше логику в наш компонент FriendListItem,
 // но это не самый лучший вариант:
 
-function FriendListItem(props) {
+let FriendListItem = function FriendListItem(props) {
   const [isOnline, setIsOnline] = useState(null);
   useEffect(() => {
     function handleStatusChange(status) {
@@ -41,7 +42,7 @@ function FriendListItem(props) {
   });
 
   return <li style={{ color: isOnline ? 'green' : 'black' }}>{props.friend.name}</li>;
-}
+};
 
 // Вместо этого, мы бы хотели, чтобы FriendStatus и FriendListItem разделяли эту логику.
 // Когда одинаковую логику состояния нужно повторно использовать в нескольких компонентах,
@@ -65,3 +66,11 @@ function useFriendStatus(friendID) {
 
   return isOnline;
 }
+
+FriendListItem = function FriendListItem(props) {
+  const isOnline = useFriendStatus(props.friend.id);
+
+  return <li style={{ color: isOnline ? 'green' : 'red' }}>{props.friend.name}</li>;
+};
+
+export { FriendListItem };
