@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 const ChatAPI = {
-  _interval: null,
+  _timeout: null,
   subscribeToFriendStatus(friendId, callback) {},
   unsubscribeFromFriendStatus(friendId, callback) {},
 };
@@ -54,8 +54,8 @@ function useFriendStatus(friendID) {
   const [isOnline, setIsOnline] = useState(null);
 
   useEffect(() => {
-    function handleStatusChange(status) {
-      setIsOnline(status.isOnline);
+    function handleStatusChange({ isOnline } = { isOnline: false }) {
+      setIsOnline(isOnline);
     }
 
     ChatAPI.subscribeToFriendStatus(friendID, handleStatusChange);
@@ -72,5 +72,7 @@ FriendListItem = function FriendListItem(props) {
 
   return <li style={{ color: isOnline ? 'green' : 'red' }}>{props.friend.name}</li>;
 };
+
+// тоже самое что и без своего хука
 
 export { FriendListItem };
