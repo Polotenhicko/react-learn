@@ -1,7 +1,5 @@
-import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { App } from './hooks/hookDeferredValue';
-import { FriendListItem } from './hooks/userHooks';
+import { SimpleForm } from './hooks/myUseDebounce';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<FriendListItem friend={{ id: 3, name: 'Антон' }} />);
+root.render(<SimpleForm />);
