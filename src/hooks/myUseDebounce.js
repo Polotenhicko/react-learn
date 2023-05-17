@@ -10,13 +10,12 @@ export function useDebounce(value, { timeoutMS } = { timeoutMS: 0 }) {
       }, timeoutMS);
     return () => clearTimeout(timeout);
   }, [value, debValue]);
-  return debValue;
+  return [debValue, value !== debValue];
 }
 
 export function SimpleForm() {
   const [value, setValue] = useState('');
-  const debValue = useDebounce(value, { timeoutMS: 500 });
-  console.log(value, debValue);
+  const [debValue, isPending] = useDebounce(value, { timeoutMS: 500 });
   const onChange = (e) => setValue(e.target.value);
   return (
     <div>
